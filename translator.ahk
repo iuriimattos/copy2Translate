@@ -1,6 +1,6 @@
+;;-------- https://www.autohotkey.com/boards/viewtopic.php?f=76&t=71993 ---
 ;- translator from user teadrinker / with GUI 
 /*
-modified=20200131 maybe #warn can be desactivated , sometimes error but script runs
 modified=20200130  translate clipboard again in other language with dropdownlist (ddl1)
 modified=20200129  warn / translate when language change (ddl1) 
 modified=20191019  ( teadrinker ) edited 1 time in total. 
@@ -10,11 +10,9 @@ select language , copy marked text ctrl+c > see translation in selected language
 */
 ;-------------------------------------------------------------------------------
 #NoEnv
-;#Warn  ;- can desactivate it / sometimes error but script runs
-;SendMode Input
+;#Warn
 setworkingdir,%a_scriptdir%
 tl1:=""
-
 Gui,1:default
 Gui,1: +AlwaysOnTop  
 Gui,1: -DPIScale
@@ -34,18 +32,16 @@ ifnotexist,%rssini%    ;- first run
     IniWrite,%translateto%, %rssini% ,Lang1  ,key1
     }
 Gui,1:Color,Black,Black
-Gui, Font,s12 cYellow ,Lucida Console 
+Gui, Font,s14 cYellow ,Lucida Console 
 IniRead, tl1, %rssini%,Lang1 ,key1
-global tl1,js
+global tl1,JS
 
-Gui,add,dropdownlist, x10 y10 w320 vDDL1 gddl2 ,%e5x%
-
-W :=(wa*29)/xx , H :=(ha*89)/xx , y:=(ha*2)/xx
-;Gui,add,edit,x1 y%y%  w%w% h%h% vED1  -vscroll -border -E0x200,
-Gui,add,edit,x1 y50  w%w% h%h% vED1 readonly -border -E0x200,
-;Gui,add,text,x0 y0 w0 vT1 ,
-W :=(wa*30)/xx , H :=(ha*92)/xx  , x:=(wa-w)
-Gui, Show,x%x% y1 w%w% h%h% ,TRANSLATE
+x:=(wa*.5)/xx,W :=(wa*28)/xx,H :=(ha*10)/xx,y:=(ha*.5)/xx
+Gui,add,dropdownlist, x%x% y%y% w%w% vDDL1 gddl2 ,%e5x%
+W :=(wa*29)/xx , H :=(ha*88)/xx , y:=(ha*3.5)/xx
+Gui,add,edit,x%x% y%y%  w%w% h%h% vED1  -border -E0x200,
+W :=(wa*30)/xx , H :=(ha*92)/xx  , x:=(wa-w),y:=(ha*1)/xx
+Gui, Show,x%x% y%y% w%w% h%h% ,TRANSLATE
 GuiControl,1:Choose,ddl1,%tl1%
 GuiControl, Focus,ED1
 WinID := WinExist("A")
@@ -59,8 +55,6 @@ Guiclose:
 cl=
 clipboard=
 exitapp
-
-
 /*
 ;------- Hotkey alt+F7 -------------------
 !F7::
@@ -82,7 +76,6 @@ exitapp
 return
 ;--------------------------
 */
-
 ;-------------- OR : ------
 ;/*
 ;----- ( Hotkey) CTRL+C Clipboardchange ---------------------
@@ -106,8 +99,6 @@ If (A_EventInfo=1)
 return
 ;--------------------------
 ;*/
-
-
 ;--------------------------
 ddl2:
 Gui,1:submit,nohide
@@ -126,28 +117,27 @@ if h1<>
 }
 return
 ;----------------------------------------
-
 ;------- translate changed language -----
 translateddlchange:
 Guicontrolget,ed1
+;stringreplace,ed1,ed1,`n,`r`n,all
 if ed1<>
 {
 aa:=GoogleTranslate(cl)      ;- translate clipboard again in other language
+;aa:=GoogleTranslate(ed1)     ;- translate EDIT            in other language
+;ControlSetText,edit1,%aa%`r`n--------------------------`r`n%a2%, ahk_class AutoHotkeyGUI
 ControlSetText,edit1,%aa%, ahk_class AutoHotkeyGUI
 aa=
+;a2=
 }
 return
 ;---------------------------------------
-
-
 ;;-------- https://www.autohotkey.com/boards/viewtopic.php?p=273621#p273621 ---
 ;- Last edited by teadrinker on Sat Oct 19, 2019 9:58 pm, edited 1 time in total. 
 ;MsgBox, % GoogleTranslate("今日の天気はとても良いです")
 ;MsgBox, % GoogleTranslate("Hello, World!", "en", "ru")
 GoogleTranslate(str, from := "auto", to := "en")  {
-   JS:=""
    trans:=""
-   json:=""
    static JS := CreateScriptObj(), _ := JS.( GetJScript() ) := JS.("delete ActiveXObject;delete GetObject;")
    json := SendRequest(JS, str, to, from, proxy := "")
    oJSON := JS.("(" . json . ")")
@@ -174,7 +164,6 @@ GoogleTranslate(str, from := "auto", to := "en")  {
    trans := Trim(trans, ",+`n ")
    Return trans
 }
-
 SendRequest(JS, str, tl, sl, proxy) {
    ComObjError(false)
    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
@@ -245,7 +234,6 @@ CreateScriptObj() {
    Return ObjBindMethod(doc.parentWindow, "eval")
 }
 ;-----------------------------------------------------------------
-
 ;-- some examples to select 
 language:
 e5x:=""
@@ -303,6 +291,8 @@ ur_Urdu
 sw_Swahili
 bn_Bengal
 %s%
+%s%
 )
 return
 ;====================== END SCRIPT ==================================================
+
