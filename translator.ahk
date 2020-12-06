@@ -152,7 +152,9 @@ GoogleTranslate(str, from := "auto", to := "en")  {
          obj := oJSON[1][A_Index-1][1]
          Loop % obj.length  {
             txt := obj[A_Index - 1]
-            trans .= (MainTransText = txt ? "" : "`n" txt)
+            trans .= (MainTransText = txt ? "" : "`n+`" txt)            
+            ; If you want first translation found. Remove (;) the below line
+            ;return MainTransText
          }
       }
    }
