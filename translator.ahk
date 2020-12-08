@@ -147,12 +147,14 @@ GoogleTranslate(str, from := "auto", to := "en")  {
    }
    else  {
       MainTransText := oJSON[0][0][0]
+      ;If you want all word meaning translation found add (;) the below line
+      return MainTransText
       Loop % oJSON[1].length  {
          trans .= "`n+"
          obj := oJSON[1][A_Index-1][1]
          Loop % obj.length  {
             txt := obj[A_Index - 1]
-            trans .= (MainTransText = txt ? "" : "`n" txt)
+            trans .= (MainTransText = txt ? "" : "`n+" txt)
          }
       }
    }
