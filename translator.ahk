@@ -1,12 +1,19 @@
-;;-------- https://www.autohotkey.com/boards/viewtopic.php?f=76&t=71993 ---
+;-------- saved at 星期一 七月 2020-07-27  11:55 UTC --------------
+;- Using Google Translate to automate text translation 
+;- https://www.autohotkey.com/boards/viewtopic.php?f=6&t=63835
+
+;- https://www.autohotkey.com/boards/viewtopic.php?f=6&t=63835
+;- https://www.autohotkey.com/boards/viewtopic.php?f=76&t=71993 ---
 ;- translator from user teadrinker / with GUI 
 /*
+modified=20200726  added AUDIO
+modified=20200329  ( teadrinker ) edited 2 times in total.
 modified=20200130  translate clipboard again in other language with dropdownlist (ddl1)
-modified=20200129  warn / translate when language change (ddl1) 
 modified=20191019  ( teadrinker ) edited 1 time in total. 
 modified=20190422  EDIT CreateScriptObj() ( teadrinker )
 created =20190419
-select language , copy marked text ctrl+c > see translation in selected language
+-select language , copy marked text ctrl+c > see translation in selected language
+-click AUDIO button to hear the text
 */
 ;-------------------------------------------------------------------------------
 #NoEnv
@@ -17,12 +24,9 @@ Gui,1:default
 Gui,1: +AlwaysOnTop  
 Gui,1: -DPIScale
 SS_REALSIZECONTROL := 0x40
-wa:=a_screenwidth
-ha:=a_screenheight
-xx:=100
+wa:=a_screenwidth,ha:=a_screenheight,xx:=100
 clipboard=
 cl=
-ex:=""
 transform,s,chr,32
 gosub,language
 rssini=%a_scriptdir%\translate.ini
@@ -32,15 +36,16 @@ ifnotexist,%rssini%    ;- first run
     IniWrite,%translateto%, %rssini% ,Lang1  ,key1
     }
 Gui,1:Color,Black,Black
-Gui, Font,s14 cYellow ,Lucida Console 
+Gui,1:Font,s14 cYellow ,Lucida Console 
 IniRead, tl1, %rssini%,Lang1 ,key1
-global tl1,JS
-
-x:=(wa*.5)/xx,W :=(wa*28)/xx,H :=(ha*10)/xx,y:=(ha*.5)/xx
+global tl1,JS,txt22,h1
+x:=(wa*.5)/xx,W :=(wa*18)/xx,H :=(ha*10)/xx,y:=(ha*.5)/xx
 Gui,add,dropdownlist, x%x% y%y% w%w% vDDL1 gddl2 ,%e5x%
-W :=(wa*29)/xx , H :=(ha*88)/xx , y:=(ha*3.5)/xx
+x:=(wa*20)/xx,W :=(wa*8)/xx,H :=(ha*2.4)/xx,y:=(ha*.5)/xx
+Gui,add,button,x%x% y%y%  w%w% h%h% gAudio,AUDIO
+x:=(wa*.5)/xx,W :=(wa*29)/xx , H :=(ha*88)/xx , y:=(ha*3.5)/xx
 Gui,add,edit,x%x% y%y%  w%w% h%h% vED1  -border -E0x200,
-W :=(wa*30)/xx , H :=(ha*92)/xx  , x:=(wa-w),y:=(ha*1)/xx
+W :=(wa*30)/xx , H :=(ha*25)/xx  , x:=(wa-w),y:=(ha*2)/xx
 Gui, Show,x%x% y%y% w%w% h%h% ,TRANSLATE
 GuiControl,1:Choose,ddl1,%tl1%
 GuiControl, Focus,ED1
@@ -55,30 +60,7 @@ Guiclose:
 cl=
 clipboard=
 exitapp
-/*
-;------- Hotkey alt+F7 -------------------
-!F7::
-  send, ^c
-  sleep,500
-  clipwait,
-  Gui, Show,
-  GuiControl, Focus,ED1
- if (!ErrorLevel)
-  {
-  cl:=clipboard
-  aa:=GoogleTranslate(cl)
-  ControlSetText,edit1,%aa%, ahk_class AutoHotkeyGUI
-  aa=
-  ;cl=
-  ;clipboard=
-  GuiControl, Focus,ED1
-  }
-return
-;--------------------------
-*/
-;-------------- OR : ------
-;/*
-;----- ( Hotkey) CTRL+C Clipboardchange ---------------------
+;-----  CTRL+C Clipboardchange ---------------------
 OnClipboardChange:
 If (A_EventInfo=1)
  {
@@ -90,15 +72,13 @@ If (A_EventInfo=1)
   cl:=clipboard
   aa:=GoogleTranslate(cl)
   ControlSetText,edit1,%aa%, ahk_class AutoHotkeyGUI
+  txt22:=aa
   aa=
-  ;cl=
-  ;clipboard=
   GuiControl, Focus,ED1
   }
  }
 return
 ;--------------------------
-;*/
 ;--------------------------
 ddl2:
 Gui,1:submit,nohide
@@ -120,25 +100,25 @@ return
 ;------- translate changed language -----
 translateddlchange:
 Guicontrolget,ed1
-;stringreplace,ed1,ed1,`n,`r`n,all
 if ed1<>
 {
 aa:=GoogleTranslate(cl)      ;- translate clipboard again in other language
-;aa:=GoogleTranslate(ed1)     ;- translate EDIT            in other language
-;ControlSetText,edit1,%aa%`r`n--------------------------`r`n%a2%, ahk_class AutoHotkeyGUI
 ControlSetText,edit1,%aa%, ahk_class AutoHotkeyGUI
+txt22:=aa
 aa=
-;a2=
 }
 return
 ;---------------------------------------
-;;-------- https://www.autohotkey.com/boards/viewtopic.php?p=273621#p273621 ---
-;- Last edited by teadrinker on Sat Oct 19, 2019 9:58 pm, edited 1 time in total. 
+;====================== TRANSLATE user teadrinker =============================
+;-------- saved at 星期日 七月 2020-07-26  19:57 UTC --------------
+;- Using Google Translate to automate text translation 
+;- https://www.autohotkey.com/boards/viewtopic.php?f=6&t=63835
 ;MsgBox, % GoogleTranslate("今日の天気はとても良いです")
 ;MsgBox, % GoogleTranslate("Hello, World!", "en", "ru")
 GoogleTranslate(str, from := "auto", to := "en")  {
    trans:=""
-   static JS := CreateScriptObj(), _ := JS.( GetJScript() ) := JS.("delete ActiveXObject;delete GetObject;")
+   static JS := CreateScriptObj(), _ := JS.( GetJScript() ) := JS.("delete ActiveXObject; delete GetObject;")
+   
    json := SendRequest(JS, str, to, from, proxy := "")
    oJSON := JS.("(" . json . ")")
    if !IsObject(oJSON[1])  {
@@ -152,7 +132,7 @@ GoogleTranslate(str, from := "auto", to := "en")  {
          obj := oJSON[1][A_Index-1][1]
          Loop % obj.length  {
             txt := obj[A_Index - 1]
-            trans .= (MainTransText = txt ? "" : "`n" txt)
+            trans .= (MainTransText = txt ? "" : "`n+`" txt)
          }
       }
    }
@@ -165,12 +145,17 @@ GoogleTranslate(str, from := "auto", to := "en")  {
    Return trans
 }
 SendRequest(JS, str, tl, sl, proxy) {
+   static http
    ComObjError(false)
-   http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-   ( proxy && http.SetProxy(2, proxy) )
-   tl1=%tl1%
-   ;http.open( "POST", "https://translate.google.com/translate_a/single?client=t&sl="
-   ;                   "https://translate.google.com/#view=home&op=translate&client=t&sl="  ;- usual in web
+   if !http
+   {
+      http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+      ( proxy && http.SetProxy(2, proxy) )
+      http.open( "get", "https://translate.google.com", 1 )
+      http.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
+      http.send()
+      http.WaitForResponse(-1)
+   }
    http.open( "POST", "https://translate.google.com/translate_a/single?client=webapp&sl="
       . sl . "&tl=" . tl1 . "&hl=" . tl1
       . "&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=0&ssel=0&tsel=0&pc=1&kc=1"
@@ -182,7 +167,7 @@ SendRequest(JS, str, tl, sl, proxy) {
    Return http.responsetext
 }
 URIEncode(str, encoding := "UTF-8")  {
-   urlstr:=""-
+   urlstr:=""
    VarSetCapacity(var, StrPut(str, encoding))
    StrPut(str, &var, encoding)
    While code := NumGet(Var, A_Index - 1, "UChar")  {
@@ -233,66 +218,125 @@ CreateScriptObj() {
    doc.write("<meta http-equiv='X-UA-Compatible' content='IE=9'>")
    Return ObjBindMethod(doc.parentWindow, "eval")
 }
-;-----------------------------------------------------------------
-;-- some examples to select 
+;============================================================================
+;=================================   AUDIO ==================================
+AUDIO:
+Gui,submit,nohide
+global aa2,TL1,text
+F1 := a_desktop . "\test.mp3"
+tl1=%tl1%
+;TL1:="de"
+;text:="Good evening , how are you ?"
+text:=txt22
+;msgbox, 262208, ,LNG=`n%lng%`n---------------------`nTEXT=`n%text%
+;return
+aa2:= GetAudioFromGoogle(text, TL1, F1)
+if (aa2<>1)
+  {
+  msgbox, 262208, ,AA2=%aa2%`nLanguage = "%Tl1%"
+  return
+  }
+soundplay,%f1%
+filedelete,%f1%
+return
+;----------------------------------------------------------------------------
+;----------------------------------------------------------------------------
+GetAudioFromGoogle(text,TL1, mp3filePath)  {
+   url := CreateUrl(text,TL1)
+   data := sendrequest2(url)
+   if SubStr(data, 1, 6) = "Error!"
+      Return data
+   
+   Return SaveDataToFile(data, mp3filePath)
+}
+CreateUrl(text, TL1)  {
+   JS := CreateScriptObj2(), JS.( GetJscript2() )
+   url := "https://translate.google.ru/translate_tts?ie=UTF-8&tl="
+         . TL1 . "&total=1&idx=0&client=t&prev=input&textlen="
+         . StrLen(text) . "&tk=" . JS.("tk").(text) . "&q=" . uriencode2(text)
+   Return url
+}
+sendrequest2(url) {
+   whr := ComObjCreate("Msxml2.XMLHTTP.6.0")
+   whr.Open("GET", url, false)
+   whr.Send()
+   
+   if (whr.Status != 200)
+      Return "Error! Status: " . whr.Status . "`n`n" . whr.responseBody
+   Return whr.responseBody
+}
+SaveDataToFile(data, filePath) {
+   stream := ComObjCreate("ADODB.Stream")
+   stream.type := 1  ; Binary data
+   stream.Open
+   stream.Write(data)
+   stream.SaveToFile(filePath, 2)
+   stream.Close
+   Return true
+}
+;=====================================================================================
+GetJscript2()
+{
+   script =
+   (
+      var TKK = ((function() {
+        var a = 561666268;
+        var b = 1526272306;
+        return 406398 + '.' + (a + b);
+      })());
+      function b(a, b) {
+        for (var d = 0; d < b.length - 2; d += 3) {
+            var c = b.charAt(d + 2),
+                c = "a" <= c ? c.charCodeAt(0) - 87 : Number(c),
+                c = "+" == b.charAt(d + 1) ? a >>> c : a << c;
+            a = "+" == b.charAt(d) ? a + c & 4294967295 : a ^ c
+        }
+        return a
+      }
+      function tk(a) {
+          for (var e = TKK.split("."), h = Number(e[0]) || 0, g = [], d = 0, f = 0; f < a.length; f++) {
+              var c = a.charCodeAt(f);
+              128 > c ? g[d++] = c : (2048 > c ? g[d++] = c >> 6 | 192 : (55296 == (c & 64512) && f + 1 < a.length && 56320 == (a.charCodeAt(f + 1) & 64512) ?
+              (c = 65536 + ((c & 1023) << 10) + (a.charCodeAt(++f) & 1023), g[d++] = c >> 18 | 240,
+              g[d++] = c >> 12 & 63 | 128) : g[d++] = c >> 12 | 224, g[d++] = c >> 6 & 63 | 128), g[d++] = c & 63 | 128)
+          }
+          a = h;
+          for (d = 0; d < g.length; d++) a += g[d], a = b(a, "+-a^+6");
+          a = b(a, "+-3^+b+-f");
+          a ^= Number(e[1]) || 0;
+          0 > a && (a = (a & 2147483647) + 2147483648);
+          a `%= 1E6;
+          return a.toString() + "." + (a ^ h)
+      }
+   )
+   Return script
+}
+UriEncode2(str, encoding := "UTF-8")  {
+   urlstr:=""
+   VarSetCapacity(var, StrPut(str, encoding))
+   StrPut(str, &var, encoding)
+   While code := NumGet(Var, A_Index - 1, "UChar")  {
+      bool := (code > 0x7F || code < 0x30 || code = 0x3D)
+      UrlStr .= bool ? "%" . Format("{:02X}", code) : Chr(code)
+   }
+   Return UrlStr
+}
+CreateScriptObj2() {
+   static doc
+   doc := ComObjCreate("htmlfile")
+   doc.write("<meta http-equiv='X-UA-Compatible' content='IE=9'>")
+   Return ObjBindMethod(doc.parentWindow, "eval")
+}
+;====================== END AUDIO ========================================
+;====================== LANGUAGEs ========================================
 language:
 e5x:=""
-e5x=
+e5x = 
 (Ltrim join|
-nl_Nederlands
-af_Suid-Afrika
-fy_Fryslân
-eu_Basque
-ca_Catalan
-de_Deutsch
-da_Dansk
-sv_Sverige
-no_Norge
-is_Iceland
-fi_Suomen
 en_English
-pt_Portugues
-es_Español
-it_Italia
-fr_Français
-ru_Rossija
-zh-CN_Chinese
-ja_Nippon
-ko_Korea
-ro_Romania
-bg_Bulgaria
-mk_Macedonia
-el_Greek
-tr_Turkiye
-sq_Albania
-hr_Croatia
-sr_Serbia
-sl_Slovenia
-hu_Hungary
-cs_Czech
-sk_Slovakia
-pl_Poland
-be_Belarus
-uk_Ukraina
-et_Estonia
-lv_Latvija
-lt_Lituania
-az_Azerbaijan 
-ka_Georgian
-ar_Arabic
-iw_Hebrew
-hi_Hindi
-id_Indonesia
-ms_Malaysia
-vi_Vietnam
-th_Thai
-ta_Tamil
-ur_Urdu
-sw_Swahili
-bn_Bengal
+pt_Portuguese
 %s%
 %s%
 )
 return
 ;====================== END SCRIPT ==================================================
-
