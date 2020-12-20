@@ -39,13 +39,13 @@ Gui,1:Color,Black,Black
 Gui,1:Font,s14 cYellow ,Lucida Console 
 IniRead, tl1, %rssini%,Lang1 ,key1
 global tl1,JS,txt22,h1
-x:=(wa*.5)/xx,W :=(wa*18)/xx,H :=(ha*10)/xx,y:=(ha*.5)/xx
+x:=(wa*2*.5)/xx,W :=(wa*2*18)/xx,H :=(ha*2*10)/xx,y:=(ha*2*.5)/xx
 Gui,add,dropdownlist, x%x% y%y% w%w% vDDL1 gddl2 ,%e5x%
-x:=(wa*20)/xx,W :=(wa*8)/xx,H :=(ha*2.4)/xx,y:=(ha*.5)/xx
+x:=(wa*2*20)/xx,W :=(wa*2*8)/xx,H :=(ha*2*2.4)/xx,y:=(ha*2*.5)/xx
 Gui,add,button,x%x% y%y%  w%w% h%h% gAudio,AUDIO
-x:=(wa*.5)/xx,W :=(wa*29)/xx , H :=(ha*88)/xx , y:=(ha*3.5)/xx
+x:=(wa*2*.5)/xx,W :=(wa*2*29)/xx , H :=(ha*2*88)/xx , y:=(ha*2*3.5)/xx
 Gui,add,edit,x%x% y%y%  w%w% h%h% vED1  -border -E0x200,
-W :=(wa*30)/xx , H :=(ha*25)/xx  , x:=(wa-w),y:=(ha*2)/xx
+W :=(wa*2*30)/xx , H :=(ha*2*25)/xx  , x:=(wa-w),y:=(ha*2*2)/xx
 Gui, Show,x%x% y%y% w%w% h%h% ,TRANSLATE
 GuiControl,1:Choose,ddl1,%tl1%
 GuiControl, Focus,ED1
