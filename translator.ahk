@@ -335,6 +335,7 @@ e5x =
 (Ltrim join|
 en_English
 pt_Portuguese
+zh-CN_Chinese
 %s%
 %s%
 )
